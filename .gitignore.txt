@@ -1,0 +1,2 @@
+# Ignorar la carpeta node_modules en el repo
+node_modules
