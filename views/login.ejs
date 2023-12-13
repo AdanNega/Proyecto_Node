@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login y Registro</title>
+    <link rel="stylesheet" href="resources/css/estilos.css">
+</head>
+<body>
+    <main>
+
+        <div class="contenedor_todo">
+            <div class="caja_trasera">
+                <div class="caja_trasera-login">
+                    <h3>¿Ya tienes una cuenta?</h3>
+                    <p>Inicia sesion para entrar a la pagina</p>
+                    <button id="btn_iniciar_sesion">Iniciar Sesion</button>
+                    
+                </div>
+                <div class="caja_trasera-registro">
+                    <h3>¿Aun no tienes una cuenta?</h3>
+                    <p>Registrate para que puedas iniciar sesion</p>
+                    <button id="btn_registro">Registrarse</button>
+
+                </div>
+            </div>
+            <div class="contenedor_login_registro">
+                <form action="/iniciar" class="formulario_login" method="post">
+                    <h2>Iniciar Sesion</h2>
+                    <input type="text" placeholder="Usuario">
+                    <input type="password" placeholder="Contraseña">
+                    <input type="submit" value="Entrar" class="boton">
+                    <!--
+                    <a href="forgot_password.html">Olvide la Contraseña</a>
+                    -->
+                </form>
+
+               <form action="/register" class="formulario_registro" method="post">
+                <h2>Registrarse</h2>
+                <input type="text" placeholder="Usuario" name="user" id="user">
+                <input type="text" placeholder="Correo Electronico" name="correo" id="correo">
+                <input type="text" placeholder="Pregunta de recuperacion" name="pregunta" id="pregunta">
+                <input type="text" placeholder="Respuesta" name="respuesta" id="respuesta">
+                <input type="password" placeholder="Contraseña" name="password" id="password">
+                <input type="submit" value="Registrar" class="boton">
+               </form>
+
+            </div>
+        </div>
+    </main>
+    
+    <script src="scripts/script.js"></script>
+    <!-- Script para las alertas de sweetalert2, no jala, pero si corre el proycto :P -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <% if(typeof alert != "undefined"){ %>
+        <script>
+            console.log('Holiiiii');
+            Swal.fire({
+                title: '<%= alertTitle %>',
+                text: '<%= alertMessage %>',
+                icon: '<%= alertIcon %>',
+                showConfirmButton: <%= showConfirmButton %> ,
+                timer: <%= timer %>     
+            }).then(()=>{
+                window.location='/ <%= ruta %>';
+            });
+        </script>
+        <% } %>
+</body>
+</html>
