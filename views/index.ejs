@@ -2,12 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="resources/css/style.css">
 </head>
 <body>
-    <h1>Página de Inicio</h1>
-    <h2>El usuario conectado es:</h2>
+    <% if (login) { %>
+        <h1>Página de Perfil</h1>
+        <br>
+        <h1>El usuario conectado es: <strong><%= name %></strong></h1>
+        <a href="logout" class="a-logout">Logout</a>
+    <% } else { %>
+        <h1>Página de Inicio</h1>
+        <br>
+        <h1><strong><%= name %></strong></h1>
+        <a href="login" class="a-login">Login</a>
+    <% } %>
+
 </body>
 </html>

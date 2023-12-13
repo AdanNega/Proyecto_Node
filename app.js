@@ -33,9 +33,7 @@ app.use(session({
 // Invocación al módulo de conexión de la BD
 const connection = require('./database/db');
 
-app.get('/', (req, res)=>{
-    res.render('index', {msg: "Mensaje de prueba"});
-});
+// Rutas
 
 app.get('/login', (req, res)=>{
     res.render('login');
@@ -54,23 +52,47 @@ app.post('/register', async (req, res)=>{
 
     // Encriptamos la contraseña
     let passwordHaash = await bcryptjs.hash(pas_usu, 8);
+    
+    connection.query('SELECT * FROM usuario WHERE nom_usu="'+nom_usu+'"', async(err,resu)=>{
 
-    connection.query('INSERT INTO usuario SET ?', {nom_usu:nom_usu, cor_usu:cor_usu, pre_usu:pre_usu, res_usu:res_usu, rol_usu:'Admin', pas_usu:passwordHaash}, async(error, results)=>{
-        if(error){
-            console.log(error);
+        if(err){
+            console.log(err);
         }else{
+            //console.log(resu);
+            //console.log(resu.length);
+            if(resu.length != 0){
+                // Código para enviar alertas con sweetalert2 (No funciona, creo)
+                res.render('login',{
+                    alert: true,
+                    alertTitle: "Error al Registrar",
+                    alertMessage: "Usuario ya existente",
+                    alertIcon: 'error',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    ruta:'login'
+                });
+            }else{
+                connection.query('INSERT INTO usuario SET ?', {nom_usu:nom_usu, cor_usu:cor_usu, pre_usu:pre_usu, res_usu:res_usu, rol_usu:'Admin', pas_usu:passwordHaash}, async(error, results)=>{
+                    if(error){
+                        console.log(error);
+                    }else{
+            
+                        // Código para enviar alertas con sweetalert2 (No funciona, creo)
+                        res.render('login',{
+                            alert: true,
+                            alertTitle: "Registration",
+                            alertMessage: "Registro exitoso!!",
+                            alertIcon: 'success',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            ruta:''
+                        });
+                    }
+                });
+            }
 
-            // Código para enviar alertas con sweetalert2 (No funciona, creo)
-            res.render('',{
-                alert: true,
-                alertTitle: "Registration",
-                alertMessage: "Registro exitoso!!",
-                alertIcon: 'success',
-                showConfirmButton: false,
-                timer: 2000,
-                ruta:''
-            });
         }
+
     });
 
 });
@@ -79,11 +101,76 @@ app.post('/register', async (req, res)=>{
 
 app.post('/iniciar', async (req, res)=>{
     
-    const nom_usu = req.body.user;
-    const pas_usu = req.body.password;
+    const nom_usu = req.body.usr;
+    const pas_usu = req.body.pass;
 
-    let passwordHaash = await bcryptjs.hash(pas_usu,8);
-    
+    //console.log(req.body);
+
+    let passwordHaash = await bcryptjs.hash(pas_usu, 8);
+
+    if(nom_usu && pas_usu){
+        connection.query('SELECT * FROM usuario WHERE nom_usu = "'+nom_usu+'"', async(error, results) =>{
+            //console.log(results);
+            if(results.length == 0 || !(await bcryptjs.compare(pas_usu, results[0].pas_usu))){
+                res.render('login',{
+                    alert: true,
+                    alertTitle: "Login Error",
+                    alertMessage: "Usuario y/o Password incorrectos",
+                    alertIcon: 'error',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    ruta:'login'
+                });
+            }else{
+                req.session.loggedin = true;
+                req.session.name = results[0].nom_usu;
+                res.render('login',{
+                    alert: true,
+                    alertTitle: "Welcome",
+                    alertMessage: "Inicio de Sesión Exitoso!",
+                    alertIcon: 'success',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    ruta:''
+                });
+            }
+        })
+    }else{
+        res.render('login',{
+            alert: true,
+            alertTitle: "Alerta",
+            alertMessage: "Favor de rellenar los campos solicitados!",
+            alertIcon: 'warning',
+            showConfirmButton: false,
+            timer: 2000,
+            ruta:'login'
+        });
+    }
+
+});
+
+// Autenticación de sesión
+
+app.get('/', (req, res)=>{
+    if(req.session.loggedin){
+        res.render('index', {
+            login: true,
+            name: req.session.name
+        });
+    }else{
+        res.render('index', {
+            login: false,
+            name: 'Debe iniciar sesión'
+        });
+    }
+})
+
+// Logout
+
+app.get('/logout', (req, res)=>{
+    req.session.destroy(()=>{
+        res.redirect('/');
+    });
 });
 
 app.listen(4000, (req, res)=>{

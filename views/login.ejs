@@ -27,8 +27,8 @@
             <div class="contenedor_login_registro">
                 <form action="/iniciar" class="formulario_login" method="post">
                     <h2>Iniciar Sesion</h2>
-                    <input type="text" placeholder="Usuario">
-                    <input type="password" placeholder="Contraseña">
+                    <input type="text" placeholder="Usuario" name="usr" id="usr">
+                    <input type="password" placeholder="Contraseña" name="pass" id="pass">
                     <input type="submit" value="Entrar" class="boton">
                     <!--
                     <a href="forgot_password.html">Olvide la Contraseña</a>
@@ -62,7 +62,7 @@
                 showConfirmButton: <%= showConfirmButton %> ,
                 timer: <%= timer %>     
             }).then(()=>{
-                window.location='/ <%= ruta %>';
+                window.location='/<%= ruta %>';
             });
         </script>
         <% } %>
